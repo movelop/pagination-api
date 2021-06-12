@@ -74,7 +74,7 @@ router.get ('/', (req,res) => {
 
 router.post ('/upload', upload.single('file'), (req, res)=>{
     // res.json({file:req.file})
-    console.log(req.file.originalname)
+    // console.log(req.file.originalname)
     res.redirect('/file')
 } )
 
