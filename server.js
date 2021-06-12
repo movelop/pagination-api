@@ -1,31 +1,21 @@
-const express = require ('express');
+const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+require('dotenv').config();
+const Article = require('./models/articles');
+
+const methodOverride = require ('method-override');
+const bodyParser = require('body-parser');
+const articleRouter = require('./routes/articles');
 
 
-app = express();
 
+const app = express();
 
-
-
-app.use(cors());
-app.use(express.json());
-
-app.get('/posts', async(req, res) => {
-    const PAGE_SIZE = 3
-    const page = parseInt(req.query.page || 0);
-    const total =await Post.countDocuments({})
-    const posts = await Post.find({})
-    .limit(PAGE_SIZE)
-    .skip(PAGE_SIZE * page);
-    res.json({totalPages : Math.ceil(total/PAGE_SIZE),
-         posts});
-})
-
-
+// connecting to mongoose
 
 console.log('connecting to mongoDB')
-mongoose.connect("mongodb://localhost/mycustomer", {
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true
@@ -35,17 +25,37 @@ mongoose.connect("mongodb://localhost/mycustomer", {
     console.log('mongoDB connection established');
 }   
 )
-const db = mongoose.connection;
-db.once("open", () => {
-    app.listen(5000);
-})
-const postSchema = new mongoose.Schema({
-    text:{
-        type:String,
-    },
-    title: {
-        type: String,
-    }
+
+
+app.set("view engine", 'ejs')
+
+app.use(express.urlencoded({extended: false}));
+app.use(bodyParser.json());
+app.use(methodOverride('_method'));
+app.use(cors());
+app.use(express.json());
+
+
+
+app.get('/', async (req, res) =>{
+    const articles = await Article.find().sort({createdAt: 'desc'});
+    res.render("articles/index", {articles:articles});
 })
 
-const Post = mongoose.model("Post", postSchema);
+
+
+
+app.use ('/articles', articleRouter);
+app.use('/posts', require('./routes/postRoute'));
+app.use('/file', require('./routes/bookRoute'));
+app.use('/video', require('./routes/videoRoute'));
+
+
+
+
+const PORT = process.env.PORT || 4000
+app.listen(PORT, ()=> console.log(`server started on port: ${PORT}`));
+
+// create storage Engine
+
+
