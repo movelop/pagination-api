@@ -53,7 +53,7 @@ app.use('/video', require('./routes/videoRoute'));
 
 
 
-const PORT = process.env.PORT || 4000
+const PORT = process.env.PORT || 80
 app.listen(PORT, ()=> console.log(`server started on port: ${PORT}`));
 
 // create storage Engine
