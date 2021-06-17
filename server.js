@@ -28,8 +28,10 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 
 app.set("view engine", 'ejs')
-
 app.use(express.urlencoded({extended: false}));
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('thetijanidisciple/build'));
+}
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
 app.use(cors());
