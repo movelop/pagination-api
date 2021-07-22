@@ -88,7 +88,7 @@ router.get('/files', async(req, res) =>{
         .limit(PAGE_SIZE)
         .skip(PAGE_SIZE * page)
         .sort({uploadDate: -1}).toArray()
-        
+
     res.json({totalPages: Math.ceil(total/PAGE_SIZE) ,files})
 })
 
@@ -103,7 +103,7 @@ router.get('/files/:filename', (req, res) =>{
             });
         }
 
-        // file exist 
+        // file exist
         return res.json(file)
     })
 
@@ -124,6 +124,12 @@ router.get ('/download/:filename', (req, res) => {
         // check if document
         if(file.contentType === "application/pdf" || file.contentType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 ) {
+	fileName = `${req.params.filename}`
+ res.set({
+	"Accept-Ranges": "bytes",
+	"Content-Disposition": `attachment; filename= ${req.params.filename}`,
+	"Content-Type": "application/pdf" || "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+	});
             const readstream = gfs.createReadStream(file.filename);
         readstream.pipe(res);
         } else {
@@ -143,6 +149,6 @@ router.delete('/files/:id', (req, res)=> {
         } res.redirect("/file")
     })
 })
- 
+
 
 module.exports = router

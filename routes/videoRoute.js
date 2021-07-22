@@ -128,9 +128,9 @@ router.get ('/show/:filename', (req, res) => {
         
         // check if document
          // create response headers
-        const rang = req.headers['range']; 
+        const rang = req.headers['range'];
+	const fileSize = file.length 
         if(rang) {
-        const fileSize = file.length;
         const parts = rang.replace(/bytes=/, '').split('-')
         const partialStart = parts[0];
         const partialEnd = parts[1];
